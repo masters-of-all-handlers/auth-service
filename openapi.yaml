@@ -1,0 +1,221 @@
+openapi: "3.0.2"
+info:
+    title: Bookmarker API
+    version: "1.0"
+servers:
+    -   url: http://localhost:8080/
+components:
+    schemas:
+        bookmark:
+            type: object
+            properties:
+                id:
+                    description: bookmark identifier
+                    type: string
+                url:
+                    description: bookmark url
+                    type: string
+                title:
+                    description: bookmark title
+                    type: string
+                tag:
+                    description: optional tag for searching
+                    type: string
+                created_ts:
+                    description: bookmarks creation time
+                    type: string
+                    format: date-time
+            required:
+                - id
+                - url
+                - title
+    responses:
+        UnauthorizedError:
+            description: X-Ya-User-Ticket key is missing or invalid
+    securitySchemes:
+        UserTicketAuth:
+            type: apiKey
+            in: header
+            name: X-Ya-User-Ticket
+paths:
+    /register:
+        post:
+            description: create new user
+            requestBody:
+                required: true
+                content:
+                    application/x-www-form-urlencoded:
+                        schema:
+                            type: object
+                            properties:
+                                email:
+                                    type: string
+                                password:
+                                    type: string
+                            required:
+                                - email
+                                - password
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    id:
+                                        type: string
+    /login:
+        post:
+            description: login to system via credentials
+            requestBody:
+                required: true
+                content:
+                    application/x-www-form-urlencoded:
+                        schema:
+                            type: object
+                            properties:
+                                email:
+                                    type: string
+                                password:
+                                    type: string
+                            required:
+                                - email
+                                - password
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    id:
+                                        type: string
+    /v1/bookmarks:
+        post:
+            description: creates new bookmark
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                url:
+                                    description: url to be saved
+                                    type: string
+                                title:
+                                    description: corresponding title
+                                    type: string
+                                tag:
+                                    description: tag for your bookmark
+                                    type: string
+                            required:
+                                - url
+                                - title
+            security:
+                -   UserTicketAuth: [ ]
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/bookmark'
+                '400':
+                    description: invalid input parameters
+                '401':
+                    $ref: "#/components/responses/UnauthorizedError"
+        get:
+            description: list all bookmarks with filters
+            parameters:
+                -   in: query
+                    name: limit
+                    description: max count of bookmarks returned in one request
+                    schema:
+                        type: integer
+                -   in: query
+                    name: tag
+                    description: filter bookmark only with given tag
+                    schema:
+                        type: string
+                -   in: query
+                    name: order_by
+                    description: order by bookmark by given field
+                    schema:
+                        type: string
+                        enum:
+                            - id
+                            - title
+                            - url
+                            - created_ts
+                        default: id
+
+            security:
+                -   UserTicketAuth: [ ]
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    items:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/bookmark'
+                '401':
+                    $ref: "#/components/responses/UnauthorizedError"
+    /v1/bookmarks/{id}:
+        get:
+            description: get bookmark by its identifier
+            parameters:
+                -   name: id
+                    in: path
+                    description: Bookmark id
+                    required: true
+                    schema:
+                        type: string
+            security:
+                -   UserTicketAuth: [ ]
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/bookmark'
+                '401':
+                    $ref: "#/components/responses/UnauthorizedError"
+                '404':
+                    description: bookmark is not found
+        delete:
+            description: delete bookmark by identifier
+            parameters:
+                -   name: id
+                    in: path
+                    description: Bookmark id
+                    required: true
+                    schema:
+                        type: string
+            security:
+                -   UserTicketAuth: [ ]
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    id:
+                                        description: identifier of deleted bookmark
+                                        type: string
+                                required:
+                                    - id
+                '401':
+                    $ref: "#/components/responses/UnauthorizedError"
+                '404':
+                    description: bookmark is not found

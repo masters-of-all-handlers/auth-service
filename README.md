@@ -1,92 +1,130 @@
-# ya-bookmarker
+# Сервис bookmarker
+
+В данном задании вам предлагается проверить работоспособность бэкенда для веб-сервиса сохранения закладок.
+Необходимо написать unit- и интеграционные тесты на данный код, а также исправить баги, найденные в процессе тестирования.
+
+## Задание
+
+Изучите код приложения и напишите _**модульные**_ и _**интеграционные**_ (API) тесты на все опубликованные эндпоинты.
+
+Необходимо добиться покрытия кода тестами минимум на 70%, правда в CI данный порог никаким образом не проверяется.
+Вас не ограничивают в выборе дополнительных инструментов для тестирования: вы можете использовать как инструменты из лекции, так и брать неупомянутые в ней библиотеки.
+
+При написании кода тестов, старайтесь чтобы он был лаконичен. Пишите вспомогательные классы для этого, если потребуется.
+
+Обязательные требования:
+1. Форкните (fork) репозиторий и создайте отдельную ветку (branch) в нем.
+2. Добавьте в папку `tests` в корне проекта необходимые интеграционные тесты с использованием библиотеки [pytest](https://docs.pytest.org/en/7.1.x/):
+    - папка и базовая конфигурация уже добавлены за вас;
+    - напишите интеграционные тесты на все HTTP API, имеющиеся в проекте;
+3. Добавьте в папку `unittests` в корне проекта необходимые модульные тесты:
+    - напишите модульные тесты, как минимум на проверку работы бизнес-логики, связанной с пользователям;
+4. При обнаружении ошибок, зафиксируйте их в отчете о тестировании (заведите issue в своем репозитории, укажите критичность - см. [bug-severity](https://www.software-testing.by/blog/bug-severity/).
+5. Исправьте обнаруженные ошибки и добейтесь прохождения всех своих тестов
+
+### Краткое описание функциональности:
+
+1. Регистрация пользователя (по логину и паролю)
+2. Аутентификация пользователя по логину и паролю с выдачей авторизационного токена
+3. Создание закладки с указанием URL и названия страницы
+    - при сохранении закладки есть возможность назначить тэг
+
+4. Просмотр закладок
+    - просмотр всех закладок
+    - просмотр одной конкретной закладки
+    - просмотр всех закладок под определенным тэгом
+    - задание порядка отображения закладок по:
+        - заголовку страницы
+        - URL страницы
+        - дате добавления
+    - ограничение на количество закладок в ответе
+5. Удаление закладки
 
 
-
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
+## Запуск приложения
+1. Запустите сервис командой `make docker-start-service-debug`
+2. Зарегистрируйте нового пользователя через запрос в ручку `/register`
 ```
-cd existing_repo
-git remote add origin https://git.yandex-academy.ru/school/ya-bookmarker.git
-git branch -M master
-git push -uf origin master
+curl -XPOST "htpp://localhost:8080/register" -F "email=me@ya.ru" -F "password=pswd"
+```
+2. Авторизуйтесь под своим новым пользователем
+```
+curl -XPOST "htpp://localhost:8080/login" -F "email=me@ya.ru" -F "password=pswd"
+```
+В ответ придет JSON, содержащий идентификатор сессии, следующего вида: `{"id":"f39227e0-494e-460e-982b-80b081f8fa4e"}`. С помощью этого идентификатора будет происходить авторизация во всех остальных ручках. Его необходимо передавать в хедере с ключом `X-Ya-User-Ticket` 
+3. Сохраните свою первую закладку
+```
+curl -XPOST "http://localhost:8080/v1/bookmarks" \
+    -H "X-Ya-User-Ticket: <AUTH_TOKEN>" \
+    -H "Content-Type: application/json" \
+    -d '{"url": "https://ya.ru", "title": "Yandex"}'
+```
+4. Остальные ручки и их спецификацию можно посмотреть в [openapi.yaml](openapi.yaml)
+
+## Работа с приложением
+
+### Требования
+
+Необходимо, чтобы были установлены следующие компоненты:
+
+- `Docker` и `docker-compose`
+- `Python`
+
+### Установка
+
+1. Склонируйте репозиторий
+    ```
+    git clone your-service-repo && cd your-service-repo
+    ```
+2. Обновите сабмодули
+   ```
+   git submodule update --init
+   ```
+3. Запустите сборку
+   - В docker контейнере (рекомендуется)
+     ```
+     make docker-build-debug
+     ```
+   - Локально (не рекомендуется)
+     ```
+     make build-debug
+     ```
+
+### Запуск
+
+- Запуск приложения в docker контейнере (рекомендуется):
+```commandline
+make docker-start-service-debug
 ```
 
-## Integrate with your tools
+- Запуск приложения локально (не рекомендуется):
+```commandline
+make service-start-debug
+```
 
-- [ ] [Set up project integrations](https://git.yandex-academy.ru/school/ya-bookmarker/-/settings/integrations)
+### Тестирование
 
-## Collaborate with your team
+- Запуск тестов в docker контейнере (рекомендуется):
+```commandline
+make docker-test-debug
+```
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+- Запуск тестов локально (не рекомендуется):
+```commandline
+make test-debug
+```
 
-## Test and Deploy
+### Запуск форматирования кода
+```commandline
+make format
+```
 
-Use the built-in continuous integration in GitLab.
+### Попробнее про фреймворк userver
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+- Документация
+  https://userver.tech/index.html
 
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!).  Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+- Документация про тесты
+    
+- Исходный код
+  https://github.com/userver-framework/userver
