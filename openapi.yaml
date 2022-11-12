@@ -65,6 +65,9 @@ paths:
                                 properties:
                                     id:
                                         type: string
+                '400':
+                    description: invalid input data or user is already registered
+
     /login:
         post:
             description: login to system via credentials
@@ -92,3 +95,7 @@ paths:
                                 properties:
                                     id:
                                         type: string
+                '400':
+                    description: invalid input data
+                '404':
+                    description: user not found or different password
