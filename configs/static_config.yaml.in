@@ -66,22 +66,6 @@ components_manager:
             method: POST
             task_processor: main-task-processor
 
-        handler-v1-add-bookmark:
-            path: /v1/bookmarks
-            method: POST
-            task_processor: main-task-processor
-        handler-v1-get-bookmark:
-            path: /v1/bookmarks/{id}
-            method: GET
-            task_processor: main-task-processor
-        handler-v1-delete-bookmark:
-            path: /v1/bookmarks/{id}
-            method: DELETE
-            task_processor: main-task-processor
-        handler-v1-get-bookmarks:
-            path: /v1/bookmarks
-            method: GET
-            task_processor: main-task-processor
 
         postgres-db-1:
             dbconnection: $dbconnection

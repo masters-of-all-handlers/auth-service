@@ -15,18 +15,12 @@ add_library(${PROJECT_NAME}_objs OBJECT
 	src/models/user.hpp
 	src/handlers/lib/auth.hpp
 	src/handlers/lib/auth.cpp
-	src/handlers/v1/add-bookmark/view.hpp
-	src/handlers/v1/add-bookmark/view.cpp
-	src/handlers/v1/get-bookmark/view.hpp
-	src/handlers/v1/get-bookmark/view.cpp
-	src/handlers/v1/get-bookmarks/view.hpp
-	src/handlers/v1/get-bookmarks/view.cpp
-	src/handlers/v1/delete-bookmark/view.hpp
-	src/handlers/v1/delete-bookmark/view.cpp
 	src/handlers/v1/register/view.hpp
 	src/handlers/v1/register/view.cpp
 	src/handlers/v1/login/view.hpp
 	src/handlers/v1/login/view.cpp
+		src/utils/check_of_input_data.h
+		src/utils/check_of_input_data.cpp
 )
 target_link_libraries(${PROJECT_NAME}_objs PUBLIC userver-core userver-postgresql)
 

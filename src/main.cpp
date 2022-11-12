@@ -7,10 +7,6 @@
 #include <userver/testsuite/testsuite_support.hpp>
 #include <userver/utils/daemon_run.hpp>
 
-#include "handlers/v1/add-bookmark/view.hpp"
-#include "handlers/v1/get-bookmark/view.hpp"
-#include "handlers/v1/delete-bookmark/view.hpp"
-#include "handlers/v1/get-bookmarks/view.hpp"
 #include "handlers/v1/register//view.hpp"
 #include "handlers/v1/login/view.hpp"
 
@@ -24,12 +20,8 @@ int main(int argc, char* argv[]) {
           .Append<userver::components::Postgres>("postgres-db-1")
           .Append<userver::clients::dns::Component>();
 
-  bookmarker::AppendAddBookmark(component_list);
-  bookmarker::AppendGetBookmark(component_list);
-  bookmarker::AppendDeleteBookmark(component_list);
-  bookmarker::AppendGetBookmarks(component_list);
-  bookmarker::AppendRegisterUser(component_list);
-  bookmarker::AppendLoginUser(component_list);
+    AppendRegisterUser(component_list);
+    AppendLoginUser(component_list);
 
   return userver::utils::DaemonMain(argc, argv, component_list);
 }

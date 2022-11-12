@@ -4,7 +4,6 @@
 #include <userver/storages/postgres/cluster.hpp>
 
 #include "../../models/session.hpp"
-
 namespace bookmarker {
 
 const std::string USER_TICKET_HEADER_NAME = "X-Ya-User-Ticket";

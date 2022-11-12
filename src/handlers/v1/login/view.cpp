@@ -11,10 +11,6 @@
 
 #include "../../../models/user.hpp"
 
-namespace bookmarker {
-
-namespace {
-
 class LoginUser final : public userver::server::handlers::HttpHandlerBase {
 public:
     static constexpr std::string_view kName = "handler-login-user";
@@ -31,14 +27,14 @@ public:
         const userver::server::http::HttpRequest& request,
         userver::server::request::RequestContext&
     ) const override {
-        auto email = request.GetFormDataArg("email").value;
+        auto login = request.GetFormDataArg("login").value;
         auto password = userver::crypto::hash::Sha256(request.GetFormDataArg("password").value);
 
         auto userResult = pg_cluster_->Execute(
             userver::storages::postgres::ClusterHostType::kMaster,
-            "SELECT * FROM bookmarker.users "
-            "WHERE email = $1 ",
-            email
+            "SELECT * FROM uservice_dynconf.users "
+            "WHERE login = $1 AND password = $2",
+            login, password
         );
 
         if (userResult.IsEmpty()) {
@@ -56,7 +52,7 @@ public:
 
         auto result = pg_cluster_->Execute(
             userver::storages::postgres::ClusterHostType::kMaster,
-            "INSERT INTO bookmarker.auth_sessions(user_id) VALUES($1) "
+            "INSERT INTO uservice_dynconf.auth_sessions(user_id) VALUES($1) "
             "ON CONFLICT DO NOTHING "
             "RETURNING auth_sessions.id",
             user.id
@@ -72,10 +68,6 @@ private:
     userver::storages::postgres::ClusterPtr pg_cluster_;
 };
 
-}  // namespace
-
 void AppendLoginUser(userver::components::ComponentList& component_list) {
     component_list.Append<LoginUser>();
 }
-
-}  // namespace bookmarker
