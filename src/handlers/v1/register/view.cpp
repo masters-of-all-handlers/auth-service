@@ -28,15 +28,17 @@ public:
             const userver::server::http::HttpRequest &request,
             userver::server::request::RequestContext &
     ) const override {
-        auto login = request.GetFormDataArg("login").value;
-        auto check_password = request.GetFormDataArg("password").value;
 
-        if (!IsRegistrationDataValid(login, check_password)) {
+        auto request_body = userver::formats::json::FromString(request.RequestBody());
+        auto login = request_body["login"].As<std::optional<std::string>>();
+        auto check_password = request_body["password"].As<std::optional<std::string>>();
+
+        if(!login.has_value() || !check_password.has_value()){
             auto &response = request.GetHttpResponse();
             response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
             return {};
         }
-        auto password = userver::crypto::hash::Sha256(check_password);
+        auto password = userver::crypto::hash::Sha256(check_password.value());
 
         auto result = pg_cluster_->Execute(
                 userver::storages::postgres::ClusterHostType::kMaster,

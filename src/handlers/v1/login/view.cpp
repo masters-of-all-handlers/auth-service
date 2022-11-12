@@ -27,14 +27,22 @@ public:
         const userver::server::http::HttpRequest& request,
         userver::server::request::RequestContext&
     ) const override {
-        auto login = request.GetFormDataArg("login").value;
-        auto password = userver::crypto::hash::Sha256(request.GetFormDataArg("password").value);
+        auto request_body = userver::formats::json::FromString(request.RequestBody());
+        auto login = request_body["login"].As<std::optional<std::string>>();
+        auto check_password = request_body["password"].As<std::optional<std::string>>();
+
+        auto password = userver::crypto::hash::Sha256(check_password.value());
+        if(!login.has_value() || !check_password.has_value()){
+            auto &response = request.GetHttpResponse();
+            response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
+            return {};
+        }
 
         auto userResult = pg_cluster_->Execute(
             userver::storages::postgres::ClusterHostType::kMaster,
             "SELECT * FROM uservice_dynconf.users "
             "WHERE login = $1 AND password = $2",
-            login, password
+            login.value(), password
         );
 
         if (userResult.IsEmpty()) {
