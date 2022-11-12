@@ -1,0 +1,8 @@
+//
+// Created by vladimir on 12.11.22.
+//
+
+#ifndef AUTH_SERVICE_CHECK_OF_INPUT_DATA_H
+#define AUTH_SERVICE_CHECK_OF_INPUT_DATA_H
+
+#endif //AUTH_SERVICE_CHECK_OF_INPUT_DATA_H
