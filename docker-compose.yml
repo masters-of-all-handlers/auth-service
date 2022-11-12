@@ -16,7 +16,7 @@ services:
         networks:
           - postgres
 
-    bookmarker-service:
+    auth-service:
         image: ghcr.io/userver-framework/docker-userver-build-base:v1a
         privileged: true
         environment:
@@ -25,7 +25,7 @@ services:
           - POSTGRES_PASSWORD=password
           - PREFIX=${PREFIX:-~/.local}
           - CC
-          - CCACHE_DIR=/bookmarker/.ccache
+          - CCACHE_DIR=/auth/.ccache
           - CCACHE_HASHDIR
           - CCACHE_NOHASHDIR
           - CCACHE_PREFIX
@@ -35,12 +35,12 @@ services:
           - CXX
           - MAKE_OPTS
         volumes:
-          - .:/bookmarker:rw
+          - .:/auth:rw
           - ./third_party/userver/tools/docker:/tools:ro
           - ${TC_CORES_DIR:-./.cores}:/cores:rw
         ports:
           - 8080:8080
-        working_dir: /bookmarker
+        working_dir: /auth
         entrypoint:
           - /tools/run_as_user.sh
         depends_on:

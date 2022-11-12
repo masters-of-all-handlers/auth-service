@@ -9,8 +9,6 @@ add_subdirectory(third_party/userver)
 
 # Common sources
 add_library(${PROJECT_NAME}_objs OBJECT
-	src/models/bookmark.hpp
-	src/models/bookmark.cpp
 	src/models/session.hpp
 	src/models/user.hpp
 	src/handlers/lib/auth.hpp

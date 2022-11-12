@@ -1,6 +1,8 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-DROP SCHEMA IF EXISTS admins CASCADE;
+DROP SCHEMA IF EXISTS uservice_dynconf CASCADE;
+
+CREATE SCHEMA IF NOT EXISTS uservice_dynconf;
 
 CREATE TABLE IF NOT EXISTS uservice_dynconf.users(
     id TEXT PRIMARY KEY DEFAULT uuid_generate_v4(),

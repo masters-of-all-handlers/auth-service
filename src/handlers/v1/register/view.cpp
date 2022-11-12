@@ -40,10 +40,10 @@ public:
 
         auto result = pg_cluster_->Execute(
                 userver::storages::postgres::ClusterHostType::kMaster,
-                "INSERT INTO uservice_dynconf.users(email, password) VALUES($1, $2) "
+                "INSERT INTO uservice_dynconf.users(login, password) VALUES($1, $2) "
                 "ON CONFLICT DO NOTHING "
                 "RETURNING users.id",
-                email, password
+                login, password
         );
 
         if (result.IsEmpty()) {
