@@ -1,34 +1,10 @@
 openapi: "3.0.2"
 info:
-    title: Bookmarker API
+    title: Auth API
     version: "1.0"
 servers:
     -   url: http://localhost:8080/
 components:
-    schemas:
-        bookmark:
-            type: object
-            properties:
-                id:
-                    description: bookmark identifier
-                    type: string
-                url:
-                    description: bookmark url
-                    type: string
-                title:
-                    description: bookmark title
-                    type: string
-                tag:
-                    description: optional tag for searching
-                    type: string
-                created_ts:
-                    description: bookmarks creation time
-                    type: string
-                    format: date-time
-            required:
-                - id
-                - url
-                - title
     responses:
         UnauthorizedError:
             description: X-Ya-User-Ticket key is missing or invalid
@@ -99,3 +75,20 @@ paths:
                     description: invalid input data
                 '404':
                     description: user not found or different password
+    /check:
+        post:
+            description: check user's login uuid
+            security:
+                - UserTicketAuth: [ ]
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    id:
+                                        type: string
+                '401':
+                    description: invalid login uuid
