@@ -27,18 +27,17 @@ build_release/Makefile:
 
 # build using cmake
 build-impl-%: build_%/Makefile
-	@cmake --build build_$* -j $(NPROCS) --target bookmarker
+	@cmake --build build_$* -j $(NPROCS) --target auth
 
 # test
 test-impl-%: build-impl-%
-	@cmake --build build_$* -j $(NPROCS) --target bookmarker_unittest
-	@cmake --build build_$* -j $(NPROCS) --target bookmarker_benchmark
+	@cmake --build build_$* -j $(NPROCS) --target auth_benchmark
 	@cd build_$* && ((test -t 1 && GTEST_COLOR=1 PYTEST_ADDOPTS="--color=yes" ctest -V) || ctest -V)
 	@pep8 tests
 
 # testsuite service runner
 service-impl-start-%: build-impl-%
-	@cd ./build_$* && $(MAKE) start-bookmarker
+	@cd ./build_$* && $(MAKE) start-auth
 
 # clean
 clean-impl-%:
@@ -60,27 +59,27 @@ format:
 
 install-debug: build-debug
 	@cd build_debug && \
-		cmake --install . -v --component bookmarker
+		cmake --install . -v --component auth
 
 install: build-release
 	@cd build_release && \
-		cmake --install . -v --component bookmarker
+		cmake --install . -v --component auth
 
 # Hide target, use only in docker environment
 --debug-start-in-docker: install
-	@sed -i 's/config_vars.yaml/config_vars.docker.yaml/g' /home/user/.local/etc/bookmarker/static_config.yaml
-	@psql 'postgresql://user:password@service-postgres:5432/bookmarker_db-1' -f ./postgresql/schemas/db-1.sql
-	@psql 'postgresql://user:password@service-postgres:5432/bookmarker_db-1' -f ./postgresql/data/initial_data.sql
-	@/home/user/.local/bin/bookmarker \
-		--config /home/user/.local/etc/bookmarker/static_config.yaml
+	@sed -i 's/config_vars.yaml/config_vars.docker.yaml/g' /home/user/.local/etc/auth/static_config.yaml
+	@psql 'postgresql://user:password@service-postgres:5432/auth_db-1' -f ./postgresql/schemas/db-1.sql
+	@psql 'postgresql://user:password@service-postgres:5432/auth_db-1' -f ./postgresql/data/initial_data.sql
+	@/home/user/.local/bin/auth \
+		--config /home/user/.local/etc/auth/static_config.yaml
 
 # Hide target, use only in docker environment
 --debug-start-in-docker-debug: install-debug
-	@sed -i 's/config_vars.yaml/config_vars.docker.yaml/g' /home/user/.local/etc/bookmarker/static_config.yaml
-	@psql 'postgresql://user:password@service-postgres:5432/bookmarker_db-1' -f ./postgresql/schemas/db-1.sql
-	@psql 'postgresql://user:password@service-postgres:5432/bookmarker_db-1' -f ./postgresql/data/initial_data.sql
-	@/home/user/.local/bin/bookmarker \
-		--config /home/user/.local/etc/bookmarker/static_config.yaml
+	@sed -i 's/config_vars.yaml/config_vars.docker.yaml/g' /home/user/.local/etc/auth/static_config.yaml
+	@psql 'postgresql://user:password@service-postgres:5432/auth_db-1' -f ./postgresql/schemas/db-1.sql
+	@psql 'postgresql://user:password@service-postgres:5432/auth_db-1' -f ./postgresql/data/initial_data.sql
+	@/home/user/.local/bin/auth \
+		--config /home/user/.local/etc/auth/static_config.yaml
 
 # Start targets makefile in docker enviroment
 docker-impl-%:

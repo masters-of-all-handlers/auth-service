@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(bookmarker CXX)
+project(auth CXX)
 
 include(third_party/userver/cmake/SetupEnvironment.cmake)
 include(GNUInstallDirs)
@@ -31,12 +31,12 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_objs)
 
 
 # Unit Tests
-add_executable(${PROJECT_NAME}_unittest
-	unittests/basic.cpp
-)
-target_link_libraries(${PROJECT_NAME}_unittest PRIVATE ${PROJECT_NAME}_objs userver-utest)
-add_google_tests(${PROJECT_NAME}_unittest)
-
+#add_executable(${PROJECT_NAME}_unittest
+#	unittests/basic.cpp
+#)
+#target_link_libraries(${PROJECT_NAME}_unittest PRIVATE ${PROJECT_NAME}_objs userver-utest)
+#add_google_tests(${PROJECT_NAME}_unittest)
+#
 
 # Benchmarks
 add_executable(${PROJECT_NAME}_benchmark

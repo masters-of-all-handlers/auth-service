@@ -6,4 +6,4 @@ is_testing: false
 
 server-port: 8080
 
-dbconnection: 'postgresql://user:password@service-postgres:5432/bookmarker_db-1'
+dbconnection: 'postgresql://user:password@service-postgres:5432/auth_db-1'

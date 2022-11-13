@@ -16,3 +16,4 @@ CREATE TABLE IF NOT EXISTS uservice_dynconf.auth_sessions (
     foreign key(user_id) REFERENCES uservice_dynconf.users(id)
 );
 
+
