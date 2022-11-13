@@ -9,6 +9,7 @@
 
 #include "handlers/v1/register//view.hpp"
 #include "handlers/v1/login/view.hpp"
+#include "handlers/v1/check/view.h"
 
 int main(int argc, char* argv[]) {
   auto component_list =
@@ -22,6 +23,7 @@ int main(int argc, char* argv[]) {
 
     AppendRegisterUser(component_list);
     AppendLoginUser(component_list);
+    AppendCheckHandler(component_list);
 
   return userver::utils::DaemonMain(argc, argv, component_list);
 }

@@ -32,7 +32,7 @@ public:
         auto check_password = request_body["password"].As<std::optional<std::string>>();
 
         auto password = userver::crypto::hash::Sha256(check_password.value());
-        if(!login.has_value() || !check_password.has_value()){
+        if(!login.has_value() || !check_password.has_value() || login.value().empty() || check_password.value().empty() ){
             auto &response = request.GetHttpResponse();
             response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
             return {};

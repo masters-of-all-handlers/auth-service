@@ -65,6 +65,11 @@ components_manager:
             path: /login
             method: POST
             task_processor: main-task-processor
+        handler-v1-check-handler:
+            path: /check
+            method: POST
+            task_processor: main-task-processor
+
 
 
         postgres-db-1:
