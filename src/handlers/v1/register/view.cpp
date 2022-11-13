@@ -10,6 +10,7 @@
 #include <userver/utils/assert.hpp>
 
 #include "../../../utils/check_of_input_data.h"
+#include "../../lib/auth.hpp"
 
 class RegisterUser final : public userver::server::handlers::HttpHandlerBase {
 public:
@@ -28,7 +29,12 @@ public:
             const userver::server::http::HttpRequest &request,
             userver::server::request::RequestContext &
     ) const override {
-
+        auto session = GetSessionInfo(pg_cluster_, request);
+        if (!session) {
+            auto& response = request.GetHttpResponse();
+            response.SetStatus(userver::server::http::HttpStatus::kUnauthorized);
+            return {};
+        }
         auto request_body = userver::formats::json::FromString(request.RequestBody());
         auto login = request_body["login"].As<std::optional<std::string>>();
         auto check_password = request_body["password"].As<std::optional<std::string>>();
@@ -39,7 +45,7 @@ public:
             return {};
         }
         auto password = userver::crypto::hash::Sha256(check_password.value());
-
+        //LOG_CRITICAL()<<password;
         auto result = pg_cluster_->Execute(
                 userver::storages::postgres::ClusterHostType::kMaster,
                 "INSERT INTO uservice_dynconf.users(login, password) VALUES($1, $2) "

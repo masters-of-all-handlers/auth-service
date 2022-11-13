@@ -17,6 +17,8 @@ paths:
     /register:
         post:
             description: create new user
+            security:
+                - UserTicketAuth: [ ]
             requestBody:
                 required: true
                 content:

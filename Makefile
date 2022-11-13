@@ -70,6 +70,7 @@ install: build-release
 --debug-start-in-docker: install
 	@sed -i 's/config_vars.yaml/config_vars.docker.yaml/g' /home/user/.local/etc/bookmarker/static_config.yaml
 	@psql 'postgresql://user:password@service-postgres:5432/bookmarker_db-1' -f ./postgresql/schemas/db-1.sql
+	@psql 'postgresql://user:password@service-postgres:5432/bookmarker_db-1' -f ./postgresql/data/initial_data.sql
 	@/home/user/.local/bin/bookmarker \
 		--config /home/user/.local/etc/bookmarker/static_config.yaml
 
@@ -77,6 +78,7 @@ install: build-release
 --debug-start-in-docker-debug: install-debug
 	@sed -i 's/config_vars.yaml/config_vars.docker.yaml/g' /home/user/.local/etc/bookmarker/static_config.yaml
 	@psql 'postgresql://user:password@service-postgres:5432/bookmarker_db-1' -f ./postgresql/schemas/db-1.sql
+	@psql 'postgresql://user:password@service-postgres:5432/bookmarker_db-1' -f ./postgresql/data/initial_data.sql
 	@/home/user/.local/bin/bookmarker \
 		--config /home/user/.local/etc/bookmarker/static_config.yaml
 
