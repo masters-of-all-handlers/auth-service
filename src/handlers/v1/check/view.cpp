@@ -35,7 +35,7 @@ public:
             return {};
         }
         userver::formats::json::ValueBuilder response;
-        response["id"] = session.value().user_id;
+        response["user_id"] = session.value().user_id;
         return ToString(response.ExtractValue());
     }
 

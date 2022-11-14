@@ -65,12 +65,12 @@ public:
             userver::storages::postgres::ClusterHostType::kMaster,
             "INSERT INTO uservice_dynconf.auth_sessions(user_id) VALUES($1) "
             "ON CONFLICT DO NOTHING "
-            "RETURNING auth_sessions.id",
+            "RETURNING auth_sessions.ticket",
             user.id
         );
 
         userver::formats::json::ValueBuilder response;
-        response["id"] = result.AsSingleRow<std::string>();
+        response["ticket"] = result.AsSingleRow<std::string>();
 
         return userver::formats::json::ToString(response.ExtractValue());
     }

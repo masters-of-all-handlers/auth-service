@@ -12,7 +12,7 @@ std::optional<TSession> GetSessionInfo(
     auto result = pg_cluster->Execute(
         userver::storages::postgres::ClusterHostType::kMaster,
         "SELECT * FROM uservice_dynconf.auth_sessions "
-        "WHERE id = $1 ",
+        "WHERE ticket = $1 ",
         id
     );
 

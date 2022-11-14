@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS uservice_dynconf.users(
 );
 
 CREATE TABLE IF NOT EXISTS uservice_dynconf.auth_sessions (
-    id TEXT PRIMARY KEY DEFAULT uuid_generate_v4(),
+    ticket TEXT PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id TEXT NOT NULL,
     foreign key(user_id) REFERENCES uservice_dynconf.users(id)
 );

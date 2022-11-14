@@ -5,7 +5,7 @@
 
 #include "../../models/session.hpp"
 
-const std::string USER_TICKET_HEADER_NAME = "X-Ya-User-Ticket";
+const std::string USER_TICKET_HEADER_NAME = "Ticket";
 
 std::optional<TSession> GetSessionInfo(
     userver::storages::postgres::ClusterPtr pg_cluster,

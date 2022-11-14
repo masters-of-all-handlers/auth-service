@@ -61,7 +61,7 @@ public:
         }
 
         userver::formats::json::ValueBuilder response;
-        response["id"] = result.AsSingleRow<std::string>();
+        response["user_id"] = result.AsSingleRow<std::string>();
 
         return userver::formats::json::ToString(response.ExtractValue());
     }

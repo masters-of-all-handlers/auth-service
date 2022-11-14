@@ -42,7 +42,7 @@ async def test_login_entry_before_reg(service_client, login, password):
     )
     assert response.status_code == 200
     head = {
-        'X-Ya-User-Ticket': response.json()['id'],
+        'Ticket': response.json()['ticket'],
         'Content-Type': 'application/json'
     }
     response = await service_client.post(
@@ -54,7 +54,7 @@ async def test_login_entry_before_reg(service_client, login, password):
         '/login', json=data, headers=head_json
     )
     head = {
-        'X-Ya-User-Ticket': response.json()['id'],
+        'Ticket': response.json()['ticket'],
         'Content-Type': 'application/json'
     }
     response = await service_client.post(

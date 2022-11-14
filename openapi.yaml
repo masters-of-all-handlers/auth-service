@@ -8,17 +8,17 @@ components:
     responses:
         UnauthorizedError:
             description: X-Ya-User-Ticket key is missing or invalid
-    securitySchemes:
-        UserTicketAuth:
-            type: apiKey
-            in: header
-            name: X-Ya-User-Ticket
 paths:
     /register:
         post:
             description: create new user
-            security:
-                - UserTicketAuth: [ ]
+            parameters:
+            - in: header
+              required: true
+              name: Ticket
+              description: ticket
+              schema:
+                type: string
             requestBody:
                 required: true
                 content:
@@ -41,7 +41,7 @@ paths:
                             schema:
                                 type: object
                                 properties:
-                                    id:
+                                    user_id:
                                         type: string
                 '400':
                     description: invalid input data or user is already registered
@@ -71,7 +71,7 @@ paths:
                             schema:
                                 type: object
                                 properties:
-                                    id:
+                                    ticket:
                                         type: string
                 '400':
                     description: invalid input data
@@ -80,8 +80,13 @@ paths:
     /check:
         post:
             description: check user's login uuid
-            security:
-                - UserTicketAuth: [ ]
+            parameters:
+            - in: header
+              required: true
+              name: Ticket
+              description: ticket
+              schema:
+                type: string
             responses:
                 '200':
                     description: OK
@@ -90,7 +95,7 @@ paths:
                             schema:
                                 type: object
                                 properties:
-                                    id:
+                                    user_id:
                                         type: string
                 '401':
                     description: invalid login uuid
