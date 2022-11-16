@@ -14,7 +14,7 @@
 
 class CheckHandler final : public userver::server::handlers::HttpHandlerBase {
 public:
-    static constexpr std::string_view kName = "handler-v1-check-handler";
+    static constexpr std::string_view kName = "handler-v1-redirect";
 
     CheckHandler(const userver::components::ComponentConfig& config,
                  const userver::components::ComponentContext& component_context)
@@ -28,16 +28,8 @@ public:
             const userver::server::http::HttpRequest& request,
             userver::server::request::RequestContext&
     ) const override {
-        std::cout << "\n\n CHEEEEECK \n\n" << std::endl;
-        auto session = GetSessionInfo(pg_cluster_, request);
-        if (!session) {
-            auto& response = request.GetHttpResponse();
-            response.SetStatus(userver::server::http::HttpStatus::kUnauthorized);
-            return {};
-        }
-        userver::formats::json::ValueBuilder response;
-        response["user_id"] = session.value().user_id;
-        return ToString(response.ExtractValue());
+        std::cout << "\n\n HEEEEEY \n\n" << std::endl;
+        return {};
     }
 
 private:
