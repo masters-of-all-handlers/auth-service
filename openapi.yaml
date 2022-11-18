@@ -8,6 +8,60 @@ components:
     responses:
         UnauthorizedError:
             description: X-Ya-User-Ticket key is missing or invalid
+    schemas:
+        Error:
+            description: Error
+            type: object
+            additionalProperties: false
+            properties:
+                code:
+                    type: string
+                    description: code error
+                message:
+                    type: string
+                    description: message error
+        variable:
+            description: variable
+            properties:
+                uuid:
+                    type: string
+                name:
+                    type: string
+                service:
+                    description: uuid
+                    type: string
+        variable_full:
+            description: variable
+            properties:
+                uuid:
+                    type: string
+                name:
+                    type: string
+                service:
+                    description: uuid
+                    type: string
+                value:
+                    type: string
+        raw_config:
+            description: confign in json format
+            properties:
+                config:
+                    type: string
+        config:
+            description: config from list
+            properties:
+                uuid:
+                    type: string
+                name:
+                    type: string
+        user:
+            description: user info for /register
+            properties:
+                login:
+                    type: string
+                password:
+                    type: string
+
 paths:
     /register:
         post:
@@ -99,3 +153,291 @@ paths:
                                         type: string
                 '401':
                     description: invalid login uuid
+    /admin/v2/configs:
+        post:
+            parameters:
+                - in: header
+                  required: true
+                  name: Ticket
+                  description: ticket
+                  schema:
+                      type: string
+            description: Adding a new dynamic config variable for specific service.
+            requestBody:
+                description: Name and value of variable
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/variable_full'
+            responses:
+                200:
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    uuid:
+                                        type: string
+
+
+                400:
+                    description: ERROR
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+        get:
+            description: Get configs with offset and limit (temporary variant)
+            parameters:
+                - in: header
+                  required: true
+                  name: Ticket
+                  description: ticket
+                  schema:
+                      type: string
+                - in: header
+                  name: offset
+                  description: offset for items
+                  schema:
+                      type: integer
+                      default: 0
+                - in: header
+                  name: limit
+                  description: max count of items returned in one request
+                  schema:
+                      type: integer
+                      default: 50
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    items:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/variable_full'
+                                    count:
+                                        type: integer
+                                    total:
+                                        type: integer
+
+
+                '400':
+                    description: ERROR
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+                '404':
+                    description: Not Found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+
+    /admin/v2/services:
+        get:
+            description: get all configs uuids
+            parameters:
+                - in: header
+                  required: true
+                  name: Ticket
+                  description: ticket
+                  schema:
+                      type: string
+                - in: header
+                  required: true
+                  name: offset
+                  schema:
+                      type: integer
+                - in: header
+                  required: true
+                  name: limit
+                  schema:
+                      type: integer
+            responses:
+                '200':
+                    description: Ok
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    items:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/config'
+                                    count:
+                                        type: integer
+                                    total:
+                                        type: integer
+
+                '400':
+                    description: Bad Request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+                '404':
+                    description: Not Found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+
+    /admin/v2/configs/{uuid}:
+        patch:
+            description: update variable with uuid
+            parameters:
+                - in: header
+                  required: true
+                  name: Ticket
+                  description: ticket
+                  schema:
+                      type: string
+                - in: path
+                  required: true
+                  name: uuid
+                  schema:
+                      type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            properties:
+                                value:
+                                    type: string
+            responses:
+                '200':
+                    description: Ok
+                '400':
+                    description: Bad Request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+                '404':
+                    description: Not Found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+
+        delete:
+            description: delete variable from config
+            parameters:
+                - in: header
+                  required: true
+                  name: Ticket
+                  description: ticket
+                  schema:
+                      type: string
+                - in: path
+                  required: true
+                  name: uuid
+                  schema:
+                      type: string
+            responses:
+                '200':
+                    description: Ok
+                '400':
+                    description: Bad Request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+                '404':
+                    description: Not Found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+        get:
+            description: get value of variable
+            parameters:
+                - in: header
+                  required: true
+                  name: Ticket
+                  description: ticket
+                  schema:
+                      type: string
+                - in: path
+                  required: true
+                  name: uuid
+                  schema:
+                      type: string
+            responses:
+                '200':
+                    description: Ok
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/variable_full'
+                '400':
+                    description: Bad Request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+                '404':
+                    description: Not Found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+    /admin/v2/services/{uuid}/clone:
+        post:
+            description: Clone existed service and all its configs
+            parameters:
+                - in: header
+                  required: true
+                  name: Ticket
+                  description: ticket
+                  schema:
+                      type: string
+                - in: path
+                  required: true
+                  name: uuid
+                  schema:
+                      type: string
+            requestBody:
+                description: Service name to assign to cloned service
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            properties:
+                                service:
+                                    type: string
+            responses:
+                200:
+                    description: Ok
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    uuid:
+                                        type: string
+                400:
+                    description: Field 'uuid' or 'service' is empty
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+                404:
+                    description: Service not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+                409:
+                    description: Service with that name already exists
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
