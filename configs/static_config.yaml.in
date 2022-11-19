@@ -68,13 +68,9 @@ components_manager:
             path: /check
             method: POST
             task_processor: main-task-processor
-        handler-configs-post:
-            path: /admin/v2/configs
-            method: POST
-            task_processor: main-task-processor
-        handler-configs-get:
-            path: /admin/v2/configs
-            method: GET
+        handler-configs:
+            path: /admin/*
+            method: GET, POST, PATCH, DELETE
             task_processor: main-task-processor
 
 

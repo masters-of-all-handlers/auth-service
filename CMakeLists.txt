@@ -21,10 +21,8 @@ add_library(${PROJECT_NAME}_objs OBJECT
 	src/handlers/v1/check/view.cpp
 	src/utils/check_of_input_data.h
 	src/utils/check_of_input_data.cpp
-        src/handlers/v2-ticket-handlers/post-configs/view.hpp
-        src/handlers/v2-ticket-handlers/post-configs/view.cpp
-		src/handlers/v2-ticket-handlers/get-configs/view.hpp
-		src/handlers/v2-ticket-handlers/get-configs/view.cpp
+	src/handlers/v2-ticket-handlers/configs/view.hpp
+    src/handlers/v2-ticket-handlers/configs/view.cpp
 )
 target_link_libraries(${PROJECT_NAME}_objs PUBLIC userver-core userver-postgresql)
 

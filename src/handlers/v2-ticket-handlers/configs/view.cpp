@@ -13,18 +13,18 @@
 #include <userver/storages/postgres/component.hpp>
 #include <userver/utils/assert.hpp>
 
-namespace auth_service::handlers::configs::post {
+namespace auth_service::handlers::configs {
     Handler::Handler(const userver::components::ComponentConfig &config,
                      const userver::components::ComponentContext& context)
-                      : HttpHandlerBase(config, context),
-                        pg_cluster_(
-                                context
-                                .FindComponent<userver::components::Postgres>("postgres-db-1")
-                                .GetCluster()),
-                        http_client_(
-                        context
-                        .FindComponent<userver::components::HttpClient>()
-                        .GetHttpClient()) {}
+            : HttpHandlerBase(config, context),
+              pg_cluster_(
+                      context
+                              .FindComponent<userver::components::Postgres>("postgres-db-1")
+                              .GetCluster()),
+              http_client_(
+                      context
+                              .FindComponent<userver::components::HttpClient>()
+                              .GetHttpClient()) {}
 
     std::string Handler::HandleRequestThrow(const userver::server::http::HttpRequest &request,
                                             userver::server::request::RequestContext &context) const {
@@ -51,7 +51,7 @@ namespace auth_service::handlers::configs::post {
       headers["user"] = session_info->user_id;
 
       auto server_response = http_client_.CreateRequest()
-              ->post(host + "/admin/v1/variables")
+              ->get(host + request.GetRequestPath())
               ->data(request.RequestBody())
               ->headers(headers)
               ->retry(5)
@@ -68,8 +68,8 @@ namespace auth_service::handlers::configs::post {
     }
 
 
-} // namespace auth_service::handlers::configs::post
+} // namespace auth_service::handlers::configs::get
 
-void AppendPostConfigsHandler(userver::components::ComponentList &component_list) {
-  component_list.Append<auth_service::handlers::configs::post::Handler>();
+void AppendGetConfigsHandler(userver::components::ComponentList &component_list) {
+  component_list.Append<auth_service::handlers::configs::get::Handler>();
 }
