@@ -39,8 +39,7 @@ public:
         LOG_CRITICAL()<<check_password.value();
         LOG_CRITICAL()<<password;
         if(!login.has_value() || !check_password.has_value() || login.value().empty() || check_password.value().empty() ){
-            auto &response = request.GetHttpResponse();
-            response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
+            http_response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
             return {};
         }
 
@@ -52,15 +51,13 @@ public:
         );
 
         if (userResult.IsEmpty()) {
-            auto& response = request.GetHttpResponse();
-            response.SetStatus(userver::server::http::HttpStatus::kNotFound);
+            http_response.SetStatus(userver::server::http::HttpStatus::kNotFound);
             return {};
         }
 
         auto user = userResult.AsSingleRow<TUser>(userver::storages::postgres::kRowTag);
         if (password != user.password) {
-            auto& response = request.GetHttpResponse();
-            response.SetStatus(userver::server::http::HttpStatus::kForbidden);
+            http_response.SetStatus(userver::server::http::HttpStatus::kForbidden);
             return {};
         }
 
