@@ -28,6 +28,9 @@ public:
             const userver::server::http::HttpRequest& request,
             userver::server::request::RequestContext&
     ) const override {
+        auto &http_response = request.GetHttpResponse();
+        http_response.SetHeader("Access-Control-Allow-Origin", "*");
+        
         auto session = GetSessionInfo(pg_cluster_, request);
         if (!session) {
             auto& response = request.GetHttpResponse();
