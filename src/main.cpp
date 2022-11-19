@@ -11,6 +11,7 @@
 #include "handlers/v2-ticket-handlers/post-configs/view.hpp"
 #include "handlers/v1/login/view.hpp"
 #include "handlers/v1/check/view.h"
+#include "handlers/v2-ticket-handlers/get-configs/view.hpp"
 
 int main(int argc, char* argv[]) {
   auto component_list =
@@ -26,6 +27,7 @@ int main(int argc, char* argv[]) {
     AppendLoginUser(component_list);
     AppendCheckHandler(component_list);
     AppendPostConfigsHandler(component_list);
+    AppendGetConfigsHandler(component_list);
 
   return userver::utils::DaemonMain(argc, argv, component_list);
 }

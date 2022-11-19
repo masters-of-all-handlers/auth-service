@@ -72,6 +72,10 @@ components_manager:
             path: /admin/v2/configs
             method: POST
             task_processor: main-task-processor
+        handler-configs-get:
+            path: /admin/v2/configs
+            method: GET
+            task_processor: main-task-processor
 
 
 
