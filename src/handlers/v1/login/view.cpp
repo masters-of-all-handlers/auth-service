@@ -35,7 +35,7 @@ public:
     auto password = userver::crypto::hash::Sha256(check_password.value());
     LOG_CRITICAL() << login.value();
     LOG_CRITICAL() << check_password.value();
-    LOG_CRITICAL() << password;
+    // LOG_CRITICAL() << password; WTF?
     if (!login.has_value() || !check_password.has_value() ||
         login.value().empty() || check_password.value().empty()) {
       auto &response = request.GetHttpResponse();
