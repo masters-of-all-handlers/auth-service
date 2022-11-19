@@ -33,6 +33,7 @@ public:
         
         auto &http_response = request.GetHttpResponse();
         http_response.SetHeader("Access-Control-Allow-Origin", "*");
+        http_response.SetHeader("Content-Type", "application/json");
 
         auto password = userver::crypto::hash::Sha256(check_password.value());
         LOG_CRITICAL()<<login.value();
