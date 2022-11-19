@@ -8,7 +8,7 @@ std::optional<TSession> GetSessionInfo(
         return std::nullopt;
     }
 
-    auto id = request.GetHeader(USER_TICKET_HEADER_NAME);
+    const auto& id = request.GetHeader(USER_TICKET_HEADER_NAME);
     auto result = pg_cluster->Execute(
         userver::storages::postgres::ClusterHostType::kMaster,
         "SELECT * FROM uservice_dynconf.auth_sessions "
