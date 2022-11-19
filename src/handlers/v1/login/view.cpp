@@ -57,7 +57,7 @@ public:
         auto user = userResult.AsSingleRow<TUser>(userver::storages::postgres::kRowTag);
         if (password != user.password) {
             auto& response = request.GetHttpResponse();
-            response.SetStatus(userver::server::http::HttpStatus::kAuthentication);
+            response.SetStatus(userver::server::http::HttpStatus::kForbidden);
             return {};
         }
 
