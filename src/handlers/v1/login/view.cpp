@@ -30,6 +30,9 @@ public:
         auto request_body = userver::formats::json::FromString(request.RequestBody());
         auto login = request_body["login"].As<std::optional<std::string>>();
         auto check_password = request_body["password"].As<std::optional<std::string>>();
+        
+        auto &http_response = request.GetHttpResponse();
+        http_response.SetHeader("Access-Control-Allow-Origin", "*");
 
         auto password = userver::crypto::hash::Sha256(check_password.value());
         LOG_CRITICAL()<<login.value();
