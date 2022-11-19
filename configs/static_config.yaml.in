@@ -70,7 +70,7 @@ components_manager:
             task_processor: main-task-processor
         handler-configs:
             path: /admin/*
-            method: GET, POST, PATCH, DELETE
+            method: GET,POST,PATCH,DELETE
             task_processor: main-task-processor
 
 
