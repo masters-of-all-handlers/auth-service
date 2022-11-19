@@ -38,6 +38,9 @@ public:
         auto request_body = userver::formats::json::FromString(request.RequestBody());
         auto login = request_body["login"].As<std::optional<std::string>>();
         auto check_password = request_body["password"].As<std::optional<std::string>>();
+        
+        auto &http_response = request.GetHttpResponse();
+        http_response.SetHeader("Access-Control-Allow-Origin", "*");
 
         if(!login.has_value() || !check_password.has_value() || login.value().empty() || check_password.value().empty() ){
             auto &response = request.GetHttpResponse();
