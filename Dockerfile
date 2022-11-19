@@ -41,14 +41,14 @@ RUN apt-get update && apt-get install -y --allow-unauthenticated --no-install-re
 	libcctz-dev \
 	libcurl4-openssl-dev \
 	libev-dev \
-# 	libfmt-dev \
+ 	libfmt-dev \
 # 	libgrpc-dev \
 #	libgrpc++-dev \
 # 	libhiredis-dev \
 	libhttp-parser-dev \
 	libjemalloc-dev \
 	libkrb5-dev \
-# 	libldap2-dev \
+ 	libldap2-dev \
 #	libmongoc-dev \
 #	libpq-dev \
 # 	libprotoc-dev \
@@ -59,11 +59,12 @@ RUN apt-get update && apt-get install -y --allow-unauthenticated --no-install-re
 # 	zlib1g-dev \
 	sudo \
     && apt-get clean all \
-	&& mkdi -pr /home/user/.local \
+	&& mkdir -p /home/user/.local \
 	&& mkdir /home/user/.local/etc && ln -s /auth/ /home/user/.local/etc
 
 
 COPY --from=build /home/user/.local/ ./
-RUN sed -i 's///home//user//.local//etc//auth//config_vars.yaml///auth//etc//auth//config_vars.docker.yaml/g' ./etc/auth/static_config.yaml
+RUN sed -i  's/\/home\/user\/.local\/etc\/auth\/config_vars.yaml/\/auth\/etc\/auth\/config_vars.docker.yaml/g'  ./etc/auth/static_config.yaml \
+    sed -i  's/home\/user\/.local\/etc/auth\/dynamic_config_fallback.json/\/auth\/etc\/auth\/dynamic_config_fallback.json/g'  ./etc/auth/static_config.yaml
 
 CMD ./bin/auth --config ./etc/auth/static_config.yaml

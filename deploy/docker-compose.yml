@@ -37,14 +37,12 @@ services:
           - CXX
           - MAKE_OPTS
         volumes:
-          - .:/auth:rw
-          - ./third_party/userver/tools/docker:/tools:ro
-          - ${TC_CORES_DIR:-./.cores}:/cores:rw
+          - ..:/auth-volume:rw
+          - ../third_party/userver/tools/docker:/tools:ro
+          - ${TC_CORES_DIR:-../.cores}:/cores:rw
         ports:
           - 8080:8080
         working_dir: /auth
-        entrypoint:
-          - /tools/run_as_user.sh
         depends_on:
           - postgres
         networks:
