@@ -7,7 +7,6 @@
 
 const std::string USER_TICKET_HEADER_NAME = "Ticket";
 
-std::optional<TSession> GetSessionInfo(
-    userver::storages::postgres::ClusterPtr pg_cluster,
-    const userver::server::http::HttpRequest& request
-);
+std::optional<TSession>
+GetSessionInfo(userver::storages::postgres::ClusterPtr pg_cluster,
+               const userver::server::http::HttpRequest &request);

@@ -2,6 +2,7 @@
 
 using namespace std;
 
-bool IsRegistrationDataValid(const std::string_view login, const std::string_view password){
-    return !login.empty() && !password.empty();
+bool IsRegistrationDataValid(const std::string_view login,
+                             const std::string_view password) {
+  return !login.empty() && !password.empty();
 }

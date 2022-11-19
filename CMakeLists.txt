@@ -17,10 +17,12 @@ add_library(${PROJECT_NAME}_objs OBJECT
 	src/handlers/v1/register/view.cpp
 	src/handlers/v1/login/view.hpp
 	src/handlers/v1/login/view.cpp
-		src/handlers/v1/check/view.h
-		src/handlers/v1/check/view.cpp
-		src/utils/check_of_input_data.h
-		src/utils/check_of_input_data.cpp
+	src/handlers/v1/check/view.h
+	src/handlers/v1/check/view.cpp
+	src/utils/check_of_input_data.h
+	src/utils/check_of_input_data.cpp
+	src/handlers/v2-ticket-handlers/configs/view.hpp
+    src/handlers/v2-ticket-handlers/configs/view.cpp
 )
 target_link_libraries(${PROJECT_NAME}_objs PUBLIC userver-core userver-postgresql)
 

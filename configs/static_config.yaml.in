@@ -42,7 +42,6 @@ components_manager:
         testsuite-support: {}
 
         http-client:
-            load-enabled: $is_testing
             fs-task-processor: fs-task-processor
 
         tests-control:
@@ -68,6 +67,10 @@ components_manager:
         handler-v1-check-handler:
             path: /check
             method: POST
+            task_processor: main-task-processor
+        handler-configs:
+            path: /admin/*
+            method: GET,POST,PATCH,DELETE
             task_processor: main-task-processor
 
 

@@ -7,11 +7,12 @@
 #include <userver/testsuite/testsuite_support.hpp>
 #include <userver/utils/daemon_run.hpp>
 
-#include "handlers/v1/register//view.hpp"
-#include "handlers/v1/login/view.hpp"
 #include "handlers/v1/check/view.h"
+#include "handlers/v1/login/view.hpp"
+#include "handlers/v1/register/view.hpp"
+#include "handlers/v2-ticket-handlers/configs/view.hpp"
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
   auto component_list =
       userver::components::MinimalServerComponentList()
           .Append<userver::server::handlers::Ping>()
@@ -21,9 +22,10 @@ int main(int argc, char* argv[]) {
           .Append<userver::components::Postgres>("postgres-db-1")
           .Append<userver::clients::dns::Component>();
 
-    AppendRegisterUser(component_list);
-    AppendLoginUser(component_list);
-    AppendCheckHandler(component_list);
+  AppendRegisterUser(component_list);
+  AppendLoginUser(component_list);
+  AppendCheckHandler(component_list);
+  AppendConfigsHandler(component_list);
 
   return userver::utils::DaemonMain(argc, argv, component_list);
 }
