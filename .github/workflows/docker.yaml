@@ -61,33 +61,38 @@ jobs:
       working-directory: ./deploy
       run: sudo docker-compose build
 
-    - name: Create archive data
-      run: docker save -o auth.tar auth-service-img:latest
-
-    - name: Install openvpn utils
+    - name: Push to ghcr.io
       run: |
-        sudo apt update
-        sudo apt install -y openvpn openvpn-systemd-resolved
-
-    - name: Copy openvpn settings
-      run: echo "${{ secrets.OPENVPN_FILE }}" > client.ovpn
-
-    - name: Set upOpenVPN
-      uses: "kota65535/github-openvpn-connect-action@v2"
-      with:
-        config_file: ./client.ovpn
-
-    - name: Copy secure key
-      run: mkdir -p ~/.ssh && echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
-
-    - name: Checkout repo
-      run: ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_LOGIN }} sudo mkdir -p ~/backend/ || echo "folder not created"
-
-    - name: Transmit image
-      run: rsync -avzh --delete --rsync-path='/usr/bin/sudo /usr/bin/rsync'  --progress auth.tar ${{ secrets.SSH_LOGIN }}:~/backend/auth.tar
-
-    - name: Checkout repo
-      run: ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_LOGIN }} sudo docker load --input ./backend/auth.tar
-
-    - name: Run service
-      run: ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_LOGIN }} sudo docker-compose up || echo "Docker compose not found"
+        docker tag auth-service-img:latest ghcr.io/${{ github.repository_owner }}/uda-auth:latest
+        docker push ghcr.io/${{ github.repository_owner }}/uda-auth:latest
+#
+#    - name: Create archive data
+#      run: docker save -o auth.tar auth-service-img:latest
+#
+#    - name: Install openvpn utils
+#      run: |
+#        sudo apt update
+#        sudo apt install -y openvpn openvpn-systemd-resolved
+#
+#    - name: Copy openvpn settings
+#      run: echo "${{ secrets.OPENVPN_FILE }}" > client.ovpn
+#
+#    - name: Set upOpenVPN
+#      uses: "kota65535/github-openvpn-connect-action@v2"
+#      with:
+#        config_file: ./client.ovpn
+#
+#    - name: Copy secure key
+#      run: mkdir -p ~/.ssh && echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+#
+#    - name: Checkout repo
+#      run: ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_LOGIN }} sudo mkdir -p ~/backend/ || echo "folder not created"
+#
+#    - name: Transmit image
+#      run: rsync -avzh --delete --rsync-path='/usr/bin/sudo /usr/bin/rsync'  --progress auth.tar ${{ secrets.SSH_LOGIN }}:~/backend/auth.tar
+#
+#    - name: Checkout repo
+#      run: ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_LOGIN }} sudo docker load --input ./backend/auth.tar
+#
+#    - name: Run service
+#      run: ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_LOGIN }} sudo docker-compose up || echo "Docker compose not found"
