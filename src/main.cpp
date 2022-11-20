@@ -11,7 +11,7 @@
 #include "handlers/v1/login/view.hpp"
 #include "handlers/v1/register/view.hpp"
 #include "handlers/v2-ticket-handlers/configs/view.hpp"
-#include "handlers/options/view.hpp"
+#include "handlers/mock-options/view.hpp"
 
 int main(int argc, char *argv[]) {
   auto component_list =
