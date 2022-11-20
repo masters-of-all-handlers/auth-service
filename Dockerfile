@@ -23,7 +23,7 @@ RUN ls  /auth
 RUN git submodule update --init && cp -r ./third_party/userver/tools/docker/ /tools/
 RUN make install
 
-
+# New days  come
 FROM debian:bullseye-slim
 
 WORKDIR /auth
