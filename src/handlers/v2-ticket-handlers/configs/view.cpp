@@ -16,7 +16,7 @@
 
 namespace auth_service::handlers::configs {
 Handler::Handler(const userver::components::ComponentConfig &config,
-                 const userver::components::ComponentContext& context)
+                 const userver::components::ComponentContext &context)
     : HttpHandlerBase(config, context),
       pg_cluster_(
           context.FindComponent<userver::components::Postgres>("postgres-db-1")
@@ -24,9 +24,9 @@ Handler::Handler(const userver::components::ComponentConfig &config,
       http_client_(context.FindComponent<userver::components::HttpClient>()
                        .GetHttpClient()) {}
 
-std::string Handler::HandleRequestThrow(
-    const userver::server::http::HttpRequest &request,
-    userver::server::request::RequestContext& _) const {
+std::string
+Handler::HandleRequestThrow(const userver::server::http::HttpRequest &request,
+                            userver::server::request::RequestContext &_) const {
   auto ticket = request.GetHeader("Ticket");
   if (ticket.empty()) {
     auto &response = request.GetHttpResponse();

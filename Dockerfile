@@ -59,12 +59,10 @@ RUN apt-get update && apt-get install -y --allow-unauthenticated --no-install-re
 # 	zlib1g-dev \
 	sudo \
     && apt-get clean all \
-	&& mkdir -p /home/user/.local \
-	&& mkdir /home/user/.local/etc && ln -s /auth/ /home/user/.local/etc
+	&& mkdir -p /root/.local && ln -s /auth/ /root/.local
 
 
-COPY --from=build /home/user/.local/ ./
-RUN sed -i  's/\/home\/user\/.local\/etc\/auth\/config_vars.yaml/\/auth\/etc\/auth\/config_vars.docker.yaml/g'  ./etc/auth/static_config.yaml \
-    sed -i  's/home\/user\/.local\/etc/auth\/dynamic_config_fallback.json/\/auth\/etc\/auth\/dynamic_config_fallback.json/g'  ./etc/auth/static_config.yaml
+COPY --from=build /root/.local/ ./
+RUN sed -i  's/config_vars.yaml/config_vars.docker.yaml/g'  ./etc/auth/static_config.yaml
 
 CMD ./bin/auth --config ./etc/auth/static_config.yaml
