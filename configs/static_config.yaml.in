@@ -44,6 +44,8 @@ components_manager:
         http-client:
             fs-task-processor: fs-task-processor
 
+        
+
         tests-control:
             load-enabled: $is_testing
             path: /tests/{action}
@@ -55,6 +57,11 @@ components_manager:
             task_processor: main-task-processor
             throttling_enabled: false
             url_trailing_slash: strict-match
+
+        handler-options-mock:
+            path: /*
+            method: OPTIONS
+            task_processor: main-task-processor
 
         handler-register-user:
             path: /register
