@@ -61,3 +61,13 @@ async def test_login_entry_before_reg(service_client, login, password):
         '/check', headers=head
     )
     assert response.status_code == 200
+
+    response = await service_client.post(
+        '/logout', json=data, headers=head_json
+    )
+
+    assert response.status_code == 200
+    response = await service_client.post(
+        '/check', headers=head
+    )
+    assert response.status_code == 401

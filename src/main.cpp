@@ -9,6 +9,7 @@
 
 #include "handlers/v1/check/view.h"
 #include "handlers/v1/login/view.hpp"
+#include "handlers/v1/logout/view.h"
 #include "handlers/v1/register/view.hpp"
 #include "handlers/v2-ticket-handlers/configs/view.hpp"
 #include "handlers/mock-options/view.hpp"
@@ -28,6 +29,7 @@ int main(int argc, char *argv[]) {
   AppendCheckHandler(component_list);
   AppendConfigsHandler(component_list);
   AppendOptionsMock(component_list);
+    AppendLogoutUser(component_list);
 
   return userver::utils::DaemonMain(argc, argv, component_list);
 }

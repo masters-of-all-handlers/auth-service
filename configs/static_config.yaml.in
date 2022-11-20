@@ -75,6 +75,11 @@ components_manager:
             path: /check
             method: POST
             task_processor: main-task-processor
+        handler-v1-logout:
+            path: /logout
+            method: POST
+            task_processor: main-task-processor
+
         handler-configs:
             path: /admin/*
             method: GET,POST,PATCH,DELETE

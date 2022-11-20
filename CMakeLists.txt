@@ -17,6 +17,8 @@ add_library(${PROJECT_NAME}_objs OBJECT
 	src/handlers/v1/register/view.cpp
 	src/handlers/v1/login/view.hpp
 	src/handlers/v1/login/view.cpp
+		src/handlers/v1/logout/view.h
+		src/handlers/v1/logout/view.cpp
 	src/handlers/v1/check/view.h
 	src/handlers/v1/check/view.cpp
 	src/utils/check_of_input_data.h
