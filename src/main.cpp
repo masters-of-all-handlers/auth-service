@@ -11,6 +11,7 @@
 #include "handlers/v1/login/view.hpp"
 #include "handlers/v1/register/view.hpp"
 #include "handlers/v2-ticket-handlers/configs/view.hpp"
+#include "handlers/options/view.hpp"
 
 int main(int argc, char *argv[]) {
   auto component_list =
@@ -26,6 +27,7 @@ int main(int argc, char *argv[]) {
   AppendLoginUser(component_list);
   AppendCheckHandler(component_list);
   AppendConfigsHandler(component_list);
+  AppendOptionsMock(component_list);
 
   return userver::utils::DaemonMain(argc, argv, component_list);
 }
