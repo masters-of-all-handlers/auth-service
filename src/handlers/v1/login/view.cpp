@@ -26,6 +26,10 @@ public:
   std::string HandleRequestThrow(
       const userver::server::http::HttpRequest &request,
       userver::server::request::RequestContext &) const override {
+    auto &http_response = request.GetHttpResponse();
+    http_response.SetHeader("Content-Type", "application/json");
+    http_response.SetHeader("Access-Control-Allow-Origin", "*");
+
     auto request_body =
         userver::formats::json::FromString(request.RequestBody());
     auto login = request_body["login"].As<std::optional<std::string>>();
@@ -38,8 +42,7 @@ public:
     // LOG_CRITICAL() << password; WTF?
     if (!login.has_value() || !check_password.has_value() ||
         login.value().empty() || check_password.value().empty()) {
-      auto &response = request.GetHttpResponse();
-      response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
+      http_response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
       return {};
     }
 
@@ -50,16 +53,14 @@ public:
         login.value(), password);
 
     if (userResult.IsEmpty()) {
-      auto &response = request.GetHttpResponse();
-      response.SetStatus(userver::server::http::HttpStatus::kNotFound);
+      http_response.SetStatus(userver::server::http::HttpStatus::kNotFound);
       return {};
     }
 
     auto user =
         userResult.AsSingleRow<TUser>(userver::storages::postgres::kRowTag);
     if (password != user.password) {
-      auto &response = request.GetHttpResponse();
-      response.SetStatus(userver::server::http::HttpStatus::kNotFound);
+      http_response.SetStatus(userver::server::http::HttpStatus::kNotFound);
       return {};
     }
 

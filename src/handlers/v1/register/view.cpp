@@ -27,10 +27,13 @@ public:
   std::string HandleRequestThrow(
       const userver::server::http::HttpRequest &request,
       userver::server::request::RequestContext &) const override {
+    auto &http_response = request.GetHttpResponse();
+    http_response.SetHeader("Content-Type", "application/json");
+    http_response.SetHeader("Access-Control-Allow-Origin", "*");
+
     auto session = GetSessionInfo(pg_cluster_, request);
     if (!session) {
-      auto &response = request.GetHttpResponse();
-      response.SetStatus(userver::server::http::HttpStatus::kUnauthorized);
+      http_response.SetStatus(userver::server::http::HttpStatus::kUnauthorized);
       return {};
     }
     auto request_body =
@@ -41,8 +44,7 @@ public:
 
     if (!login.has_value() || !check_password.has_value() ||
         login.value().empty() || check_password.value().empty()) {
-      auto &response = request.GetHttpResponse();
-      response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
+      http_response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
       return {};
     }
     auto password = userver::crypto::hash::Sha256(check_password.value());
@@ -55,8 +57,7 @@ public:
         login, password);
 
     if (result.IsEmpty()) {
-      auto &response = request.GetHttpResponse();
-      response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
+      http_response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
       return {};
     }
 

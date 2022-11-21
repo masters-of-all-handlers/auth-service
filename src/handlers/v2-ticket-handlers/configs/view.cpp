@@ -27,17 +27,19 @@ Handler::Handler(const userver::components::ComponentConfig &config,
 std::string Handler::HandleRequestThrow(
     const userver::server::http::HttpRequest &request,
     userver::server::request::RequestContext& _) const {
+  auto &http_response = request.GetHttpResponse();
+  http_response.SetHeader("Content-Type", "application/json");
+  http_response.SetHeader("Access-Control-Allow-Origin", "*");
+  
   auto ticket = request.GetHeader("Ticket");
   if (ticket.empty()) {
-    auto &response = request.GetHttpResponse();
-    response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
+    http_response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
     return {};
   }
 
   auto session_info = GetSessionInfo(pg_cluster_, request);
   if (!session_info.has_value()) {
-    auto &response = request.GetHttpResponse();
-    response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
+    http_response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
     return {};
   }
 
@@ -58,8 +60,7 @@ std::string Handler::HandleRequestThrow(
                              ->perform();
 
   if (!server_response->IsOk()) {
-    auto &response = request.GetHttpResponse();
-    response.SetStatus(
+    http_response.SetStatus(
         userver::server::http::HttpStatus(server_response->status_code()));
     return {};
   } else {
