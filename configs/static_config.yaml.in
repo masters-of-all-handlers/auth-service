@@ -75,9 +75,9 @@ components_manager:
             path: /check
             method: POST
             task_processor: main-task-processor
-        handler-configs:
+        handler-redirect:
             path: /admin/*
-            method: GET,POST,PATCH,DELETE
+            method: GET,POST,PATCH,DELETE,OPTIONS
             task_processor: main-task-processor
 
 

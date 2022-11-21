@@ -9,10 +9,10 @@
 #include <string_view>
 #include <userver/components/component_list.hpp>
 
-namespace auth_service::handlers::configs {
+namespace auth_service::handlers::redirect {
 class Handler final : public userver::server::handlers::HttpHandlerBase {
 public:
-  static constexpr std::string_view kName = "handler-configs";
+  static constexpr std::string_view kName = "handler-redirect";
 
   Handler(const userver::components::ComponentConfig &config,
           const userver::components::ComponentContext &context);
@@ -27,4 +27,4 @@ private:
 };
 } // namespace auth_service::handlers::configs
 
-void AppendConfigsHandler(userver::components::ComponentList &component_list);
+void AppendRedirectHandler(userver::components::ComponentList &component_list);

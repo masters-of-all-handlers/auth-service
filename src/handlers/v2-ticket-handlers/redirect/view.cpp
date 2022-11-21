@@ -13,8 +13,9 @@
 #include <userver/storages/postgres/cluster.hpp>
 #include <userver/storages/postgres/component.hpp>
 #include <userver/utils/assert.hpp>
+#include <iostream>
 
-namespace auth_service::handlers::configs {
+namespace auth_service::handlers::redirect {
 Handler::Handler(const userver::components::ComponentConfig &config,
                  const userver::components::ComponentContext& context)
     : HttpHandlerBase(config, context),
@@ -23,6 +24,30 @@ Handler::Handler(const userver::components::ComponentConfig &config,
               .GetCluster()),
       http_client_(context.FindComponent<userver::components::HttpClient>()
                        .GetHttpClient()) {}
+
+userver::clients::http::HttpMethod convert(
+    const userver::server::http::HttpMethod method) {
+  using sMethod = userver::server::http::HttpMethod;
+  using cMethod = userver::clients::http::HttpMethod;
+  switch(method) {
+    case sMethod::kDelete: 
+      return cMethod::kDelete;
+    case sMethod::kPost: 
+      return cMethod::kPost;
+    case sMethod::kGet: 
+      return cMethod::kGet;
+    case sMethod::kPut: 
+      return cMethod::kPut;
+    case sMethod::kPatch: 
+      return cMethod::kPatch;
+    case sMethod::kOptions: 
+      return cMethod::kOptions;
+    case sMethod::kHead: 
+      return cMethod::kHead;
+    default:
+      return cMethod::kGet;
+  }
+}
 
 std::string Handler::HandleRequestThrow(
     const userver::server::http::HttpRequest &request,
@@ -45,31 +70,40 @@ std::string Handler::HandleRequestThrow(
 
   std::string host(getenv("DYN_CONFIG_SERVER_ADRESS"));
 
+  std::cout << host + request.GetRequestPath() << "\n\n\n\n\n" << std::endl;
+
   userver::clients::http::Headers headers = {};
   for (const auto &header_name : request.GetHeaderNames()) {
     headers[header_name] = request.GetHeader(header_name);
   }
   headers["user"] = session_info->user_id;
 
-  auto server_response = http_client_.CreateRequest()
-                             ->get(host + request.GetRequestPath())
-                             ->data(request.RequestBody())
-                             ->headers(headers)
-                             ->retry(5)
-                             ->timeout(std::chrono::seconds(1))
-                             ->perform();
-
-  if (!server_response->IsOk()) {
-    http_response.SetStatus(
-        userver::server::http::HttpStatus(server_response->status_code()));
-    return {};
+  if (request.GetMethod() == userver::server::http::HttpMethod::kPost || request.GetMethod() == userver::server::http::HttpMethod::kPatch) {
+    auto server_response = http_client_.CreateRequest()
+      ->method(convert(request.GetMethod()))
+      ->url(host + request.GetRequestPath())
+      ->data(request.RequestBody())
+      ->headers(headers)
+      ->retry(5)
+      ->timeout(std::chrono::seconds(1))
+      ->perform();
   } else {
-    return server_response->body();
+    auto server_response = http_client_.CreateRequest()
+      ->method(convert(request.GetMethod()))
+      ->url(host + request.GetRequestPath())
+      ->headers(headers)
+      ->retry(5)
+      ->timeout(std::chrono::seconds(1))
+      ->perform();
   }
+
+  http_response.SetStatus(
+    userver::server::http::HttpStatus(server_response->status_code()));
+  return server_response->body();
 }
 
-} // namespace auth_service::handlers::configs
+} // namespace auth_service::handlers::redirect
 
-void AppendConfigsHandler(userver::components::ComponentList &component_list) {
-  component_list.Append<auth_service::handlers::configs::Handler>();
+void AppendRedirectHandler(userver::components::ComponentList &component_list) {
+  component_list.Append<auth_service::handlers::redirect::Handler>();
 }

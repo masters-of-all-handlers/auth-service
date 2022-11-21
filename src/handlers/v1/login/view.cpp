@@ -29,7 +29,7 @@ public:
     auto &http_response = request.GetHttpResponse();
     http_response.SetHeader("Content-Type", "application/json");
     http_response.SetHeader("Access-Control-Allow-Origin", "*");
-
+    
     auto request_body =
         userver::formats::json::FromString(request.RequestBody());
     auto login = request_body["login"].As<std::optional<std::string>>();
