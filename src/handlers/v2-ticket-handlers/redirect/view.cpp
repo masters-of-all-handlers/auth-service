@@ -13,7 +13,6 @@
 #include <userver/storages/postgres/cluster.hpp>
 #include <userver/storages/postgres/component.hpp>
 #include <userver/utils/assert.hpp>
-#include <iostream>
 
 namespace auth_service::handlers::redirect {
 Handler::Handler(const userver::components::ComponentConfig &config,
@@ -70,34 +69,23 @@ std::string Handler::HandleRequestThrow(
 
   std::string host(getenv("DYN_CONFIG_SERVER_ADRESS"));
 
-  std::cout << host + request.GetRequestPath() << "\n\n\n\n\n" << std::endl;
-
   userver::clients::http::Headers headers = {};
   for (const auto &header_name : request.GetHeaderNames()) {
     headers[header_name] = request.GetHeader(header_name);
   }
   headers["user"] = session_info->user_id;
 
-
-  std::shared_ptr<userver::clients::http::Response> server_response;
+  std::shared_ptr<userver::clients::http::Request> redirected_request = http_client_.CreateRequest();
   if (request.GetMethod() == userver::server::http::HttpMethod::kPost || request.GetMethod() == userver::server::http::HttpMethod::kPatch) {
-    server_response = http_client_.CreateRequest()
-      ->method(convert(request.GetMethod()))
-      ->url(host + request.GetRequestPath())
-      ->data(request.RequestBody())
-      ->headers(headers)
-      ->retry(5)
-      ->timeout(std::chrono::seconds(1))
-      ->perform();
-  } else {
-    server_response = http_client_.CreateRequest()
-      ->method(convert(request.GetMethod()))
-      ->url(host + request.GetRequestPath())
-      ->headers(headers)
-      ->retry(5)
-      ->timeout(std::chrono::seconds(1))
-      ->perform();
+    redirected_request = redirected_request->data(request.RequestBody());
   }
+
+  auto server_response = redirected_request->headers(headers)
+                         ->method(convert(request.GetMethod()))
+                         ->url(host + request.GetRequestPath())
+                         ->retry(5)
+                         ->timeout(std::chrono::seconds(1))
+                         ->perform();
 
   http_response.SetStatus(
     userver::server::http::HttpStatus(server_response->status_code()));
