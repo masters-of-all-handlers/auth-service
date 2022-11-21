@@ -20,7 +20,7 @@ services:
         image: ghcr.io/userver-framework/docker-userver-build-base:v1a
         privileged: true
         environment:
-          - DYN_CONFIG_SERVER_ADRESS=http://10.21.0.234:8083/
+          - DYN_CONFIG_SERVER_ADRESS=DYN_CONFIG_SERVER_ADRESS_GLOBAL
           - POSTGRES_DB=auth_db-1
           - POSTGRES_USER=user
           - POSTGRES_PASSWORD=password
