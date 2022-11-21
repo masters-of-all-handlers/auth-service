@@ -78,8 +78,10 @@ std::string Handler::HandleRequestThrow(
   }
   headers["user"] = session_info->user_id;
 
+
+  std::shared_ptr<userver::clients::http::Response> server_response;
   if (request.GetMethod() == userver::server::http::HttpMethod::kPost || request.GetMethod() == userver::server::http::HttpMethod::kPatch) {
-    auto server_response = http_client_.CreateRequest()
+    server_response = http_client_.CreateRequest()
       ->method(convert(request.GetMethod()))
       ->url(host + request.GetRequestPath())
       ->data(request.RequestBody())
@@ -88,7 +90,7 @@ std::string Handler::HandleRequestThrow(
       ->timeout(std::chrono::seconds(1))
       ->perform();
   } else {
-    auto server_response = http_client_.CreateRequest()
+    server_response = http_client_.CreateRequest()
       ->method(convert(request.GetMethod()))
       ->url(host + request.GetRequestPath())
       ->headers(headers)
