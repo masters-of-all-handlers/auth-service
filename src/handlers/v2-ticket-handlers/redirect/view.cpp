@@ -58,13 +58,20 @@ std::string Handler::HandleRequestThrow(
   auto ticket = request.GetHeader("Ticket");
   if (ticket.empty()) {
     http_response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
-    return {};
+    http_response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
+    userver::formats::json::ValueBuilder response;
+    response["error_message"] = "Ticket header is required";
+
+    return userver::formats::json::ToString(response.ExtractValue());
   }
 
   auto session_info = GetSessionInfo(pg_cluster_, request);
   if (!session_info.has_value()) {
     http_response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
-    return {};
+    userver::formats::json::ValueBuilder response;
+    response["error_message"] = "Ticket is invalid";
+
+    return userver::formats::json::ToString(response.ExtractValue());
   }
 
   std::string host(getenv("DYN_CONFIG_SERVER_ADRESS"));
@@ -89,6 +96,9 @@ std::string Handler::HandleRequestThrow(
 
   http_response.SetStatus(
     userver::server::http::HttpStatus(server_response->status_code()));
+  for (const auto& header : server_response->headers()) {
+    http_response.SetHeader(header.first, header.second);
+  }
   return server_response->body();
 }
 
