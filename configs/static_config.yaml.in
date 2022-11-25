@@ -77,7 +77,7 @@ components_manager:
             task_processor: main-task-processor
         handler-redirect:
             path: /admin/*
-            method: GET,POST,PATCH,DELETE,OPTIONS
+            method: GET,POST,PATCH,DELETE
             task_processor: main-task-processor
 
 
