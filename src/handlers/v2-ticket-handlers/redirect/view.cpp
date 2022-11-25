@@ -87,9 +87,22 @@ std::string Handler::HandleRequestThrow(
     redirected_request = redirected_request->data(request.RequestBody());
   }
 
+  std::string url = host + request.GetRequestPath() + "?";
+  for (const auto& argument_name: request.ArgNames()) {
+    for (const auto& argument_value : request.GetArgVector(argument_name)) {
+      for (const auto& name_char : argument_name) {
+        url.push_back(name_char);
+      }
+      url.push_back('=');
+      for (const auto& value_char : argument_value) {
+        url.push_back(value_char);
+      }
+      url.push_back('&');
+    }
+  }
   auto server_response = redirected_request->headers(headers)
                          ->method(convert(request.GetMethod()))
-                         ->url(host + request.GetRequestPath())
+                         ->url(url)
                          ->retry(5)
                          ->timeout(std::chrono::seconds(1))
                          ->perform();
